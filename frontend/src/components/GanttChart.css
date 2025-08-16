@@ -1,0 +1,114 @@
+.gantt-timeline {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background: #fafafa;
+  overflow: hidden;
+}
+
+.gantt-timeline .phase-bar {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.gantt-timeline .phase-bar:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gantt-timeline .today-line {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.gantt-chart-container .ant-table-expanded-row {
+  background: #f8f9fa !important;
+}
+
+.gantt-chart-container .ant-table-expanded-row-content {
+  padding: 20px !important;
+}
+
+.phase-status-tag {
+  margin: 2px;
+  transition: all 0.2s ease;
+}
+
+.phase-status-tag:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-stats .ant-statistic-content {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.calendar-milestone {
+  font-size: 10px;
+  color: #1890ff;
+  background: #e6f7ff;
+  border-radius: 2px;
+  padding: 1px 3px;
+  margin: 1px 0;
+}
+
+.gantt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.current-date-indicator {
+  font-weight: 500;
+  color: #1890ff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-timeline-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar-text {
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .gantt-timeline {
+    overflow-x: auto;
+  }
+  
+  .gantt-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .project-stats .ant-col {
+    margin-bottom: 16px;
+  }
+}
