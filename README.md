@@ -1,12 +1,12 @@
 # Project Management System
 
-A comprehensive project management system built with React frontend, Spring Boot 3 backend, and MySQL database.
+A comprehensive project management system built with React frontend, Spring Boot 3 backend, and PostgreSQL database.
 
 ## Architecture
 
 - **Frontend**: React with Node.js
-- **Backend**: Spring Boot 3 (Java)
-- **Database**: MySQL
+- **Backend**: Spring Boot 3 (Java)  
+- **Database**: PostgreSQL (Production) / MySQL (Development)
 - **Layout**: Left and right panel design
 
 ## Project Structure
@@ -15,7 +15,7 @@ A comprehensive project management system built with React frontend, Spring Boot
 workflow_pro/
 ├── frontend/          # React application
 ├── backend/           # Spring Boot 3 application
-├── database/          # MySQL scripts and schema
+├── database/          # Database scripts and schema (PostgreSQL/MySQL)
 └── docs/             # Documentation
 ```
 
@@ -61,7 +61,7 @@ Before running the application, ensure you have the following installed:
 1. **Node.js 18+** - [Download from nodejs.org](https://nodejs.org/)
 2. **Java 21** - [Download OpenJDK](https://openjdk.org/) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
 3. **Maven 3.6+** - [Download from maven.apache.org](https://maven.apache.org/download.cgi)
-4. **MySQL 8.0+** - [Download from mysql.com](https://dev.mysql.com/downloads/mysql/)
+4. **PostgreSQL 13+** (Default for both Development and Production) - [PostgreSQL](https://www.postgresql.org/download/)
 
 ### Installation Steps
 
@@ -79,48 +79,148 @@ Before running the application, ensure you have the following installed:
 - Add Maven bin directory to PATH
 - Verify installation: `mvn --version`
 
-#### 4. Install MySQL
-- Download and install MySQL 8.0+
-- Create a database user and note credentials
-- Start MySQL service
+#### 4. Install PostgreSQL
+- Download and install PostgreSQL 13+
+- Set password for postgres user during installation
+- Start PostgreSQL service
+- **详细安装指南**: 请参考 [docs/POSTGRESQL_SETUP.md](docs/POSTGRESQL_SETUP.md)
 
 ## Database Setup
 
-1. **Create Database and User**
+### PostgreSQL Setup (Default for Development and Production)
+
+1. **Run Setup Script (Windows):**
+   ```cmd
+   cd database
+   setup-postgresql.bat
+   ```
+
+2. **Run Setup Script (Linux/Mac):**
+   ```bash
+   cd database
+   chmod +x setup-postgresql.sh
+   ./setup-postgresql.sh
+   ```
+   chmod +x setup-postgresql.sh
+   ./setup-postgresql.sh
+   ```
+
+2. **Run Setup Script (Windows):**
+   ```cmd
+   cd database
+   setup-postgresql.bat
+   ```
+
+3. **Manual Setup:**
    ```sql
    CREATE DATABASE project_management_system;
-   -- 使用您现有的root账号，密码为12356
+   -- Run postgresql_schema.sql
+   \i postgresql_schema.sql
+   -- Optionally load test data
+   \i postgresql_test_data.sql
    ```
 
-2. **Run Database Schema**
-   ```bash
-   mysql -u root -p project_management_system < database/schema.sql
-   # 输入密码: 12356
-   ```
+### Alternative Database Options
 
-3. **Backend Configuration**
-   配置已更新为使用您的数据库凭据:
-   ```properties
-   spring.datasource.username=root
-   spring.datasource.password=12356
-   ```
+#### MySQL (如果需要使用MySQL)
+使用MySQL配置文件运行：
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+```
+
+#### H2 (快速测试用内存数据库)
+使用H2内存数据库进行快速测试：
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=h2
+```
+访问H2控制台: http://localhost:8080/h2-console
+
+## Configuration
+
+### Default Configuration (PostgreSQL Development)
+默认的 `application.properties` 已配置为PostgreSQL:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/project_management_system
+spring.datasource.username=postgres
+spring.datasource.password=${DB_PASSWORD:postgres}
+```
+
+### Production Configuration (PostgreSQL)
+生产环境配置文件 `application-prod.properties`:
+```properties
+# Database configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/project_management_system
+spring.datasource.username=${DB_USERNAME:postgres}
+spring.datasource.password=${DB_PASSWORD:your_password}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA configuration
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+
+# Connection pool
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.idle-timeout=600000
+spring.datasource.hikari.max-lifetime=1800000
+```
 
 ## Running the Application
 
-### 1. Start Backend (Spring Boot)
+### Default Mode (PostgreSQL Development)
+1. **Start Backend (Spring Boot)**
+   ```bash
+   cd backend
+   mvn spring-boot:run
+   ```
+   Backend will start on http://localhost:8080
+
+2. **Start Frontend (React)**
+   ```bash
+   cd frontend
+   npm install
+   npm start
+   ```
+   Frontend will start on http://localhost:3000
+
+### Alternative Database Profiles
+
+#### Using MySQL (如果需要)
 ```bash
 cd backend
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql
 ```
-Backend will start on http://localhost:8080
 
-### 2. Start Frontend (React)
+#### Using H2 (快速测试)
 ```bash
-cd frontend
-npm install
-npm start
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=h2
 ```
-Frontend will start on http://localhost:3000
+
+### Production Mode (PostgreSQL)
+1. **Start Backend with Production Profile**
+   ```bash
+   cd backend
+   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   ```
+
+2. **Or build and run JAR**
+   ```bash
+   cd backend
+   mvn clean package
+   java -jar -Dspring.profiles.active=prod target/project-management-0.0.1-SNAPSHOT.jar
+   ```
+
+3. **Start Frontend (Production Build)**
+   ```bash
+   cd frontend
+   npm run build
+   # Serve the build folder with your preferred web server
+   ```
 
 ### 3. Access the Application
 Open your browser and navigate to http://localhost:3000

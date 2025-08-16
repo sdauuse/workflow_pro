@@ -50,6 +50,14 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- PostgreSQL Driver (Default) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- MySQL Driver (Optional - for mysql profile) -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
