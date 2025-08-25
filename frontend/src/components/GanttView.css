@@ -1,0 +1,215 @@
+/* GanttView.css - 甘特图组件样式 */
+
+/* 甘特图容器样式 */
+.gantt-view-card {
+    margin-bottom: 24px;
+}
+
+.gantt-view-card.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    margin: 0;
+    border-radius: 0;
+}
+
+.gantt-container {
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* 任务状态样式 */
+.gantt_task_line.gantt_completed .gantt_task_progress,
+.gantt_task_line.gantt_completed .gantt_task_content {
+    background-color: #52c41a !important;
+    border-color: #389e0d !important;
+}
+
+.gantt_task_line.gantt_in_progress .gantt_task_progress,
+.gantt_task_line.gantt_in_progress .gantt_task_content {
+    background-color: #1890ff !important;
+    border-color: #096dd9 !important;
+}
+
+.gantt_task_line.gantt_delayed .gantt_task_progress,
+.gantt_task_line.gantt_delayed .gantt_task_content {
+    background-color: #ff4d4f !important;
+    border-color: #cf1322 !important;
+}
+
+.gantt_task_line.gantt_on_hold .gantt_task_progress,
+.gantt_task_line.gantt_on_hold .gantt_task_content {
+    background-color: #faad14 !important;
+    border-color: #d48806 !important;
+}
+
+.gantt_task_line.gantt_not_started .gantt_task_progress,
+.gantt_task_line.gantt_not_started .gantt_task_content {
+    background-color: #d9d9d9 !important;
+    border-color: #bfbfbf !important;
+}
+
+.gantt_task_line.gantt_overdue .gantt_task_progress,
+.gantt_task_line.gantt_overdue .gantt_task_content {
+    background-color: #ff4d4f !important;
+    border-color: #cf1322 !important;
+    animation: blink 1.5s infinite;
+}
+
+/* 超期任务闪烁动画 */
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.7; }
+}
+
+/* 基线（计划时间）样式 */
+.gantt_task_baseline {
+    position: absolute;
+    border-radius: 2px;
+    opacity: 0.6;
+    margin-top: -7px;
+    height: 4px;
+    background-color: #faad14 !important;
+    border: 1px solid #d48806;
+    z-index: 1;
+}
+
+/* 甘特图表格样式优化 */
+.gantt_grid_scale .gantt_grid_head_cell,
+.gantt_task_scale .gantt_scale_cell {
+    background-color: #fafafa;
+    border-color: #f0f0f0;
+    font-weight: 500;
+}
+
+.gantt_grid_data .gantt_row:nth-child(odd) {
+    background-color: #fafafa;
+}
+
+.gantt_grid_data .gantt_row:hover {
+    background-color: #e6f7ff;
+}
+
+/* 任务文本样式 */
+.gantt_task_content {
+    color: white !important;
+    font-weight: 500;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+/* 时间刻度样式 */
+.gantt_task_scale .gantt_scale_cell {
+    text-align: center;
+    font-size: 12px;
+}
+
+/* 网格线样式 */
+.gantt_task_bg {
+    background-color: #fff;
+}
+
+.gantt_task_row.odd {
+    background-color: #fafafa;
+}
+
+/* 工具提示样式 */
+.gantt_tooltip {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    max-width: 300px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 滚动条样式 */
+.gantt_layout_cell::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.gantt_layout_cell::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.gantt_layout_cell::-webkit-scrollbar-thumb {
+    background-color: #bfbfbf;
+    border-radius: 4px;
+}
+
+.gantt_layout_cell::-webkit-scrollbar-thumb:hover {
+    background-color: #999;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .gantt-container {
+        height: 400px !important;
+    }
+    
+    .gantt_grid_scale .gantt_grid_head_cell {
+        font-size: 12px;
+    }
+    
+    .gantt_task_scale .gantt_scale_cell {
+        font-size: 10px;
+    }
+}
+
+/* 加载状态样式 */
+.ant-spin-container {
+    position: relative;
+}
+
+.ant-spin-blur {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* 全屏模式下的卡片内容区域 */
+.gantt-view-card.fullscreen .ant-card-body {
+    height: calc(100vh - 120px);
+    overflow: hidden;
+}
+
+.gantt-view-card.fullscreen .gantt-container {
+    height: 100% !important;
+    border: none;
+}
+
+/* 甘特图表头固定样式 */
+.gantt_grid_scale,
+.gantt_task_scale {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* 选中状态样式 */
+.gantt_selected .gantt_task_content {
+    box-shadow: 0 0 0 2px #1890ff;
+    border-radius: 3px;
+}
+
+/* 拖拽状态样式 */
+.gantt_drag_marker {
+    background-color: #ff4d4f !important;
+    opacity: 0.8;
+}
+
+.gantt_link_direction_left,
+.gantt_link_direction_right {
+    background-color: #1890ff !important;
+}
+
+/* 右键菜单样式（如果启用） */
+.gantt_context_menu {
+    border-radius: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}

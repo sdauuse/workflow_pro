@@ -3,7 +3,20 @@
 -- CREATE DATABASE project_management_system;
 
 -- Connect to the database
-\c project_management_system;
+-- \c project_management_system;
+
+-- Create enum types for project phases
+DO $$ BEGIN
+    CREATE TYPE phase_name_enum AS ENUM ('ESTIMATED', 'PLANNING', 'DEVELOPMENT', 'SIT', 'UAT', 'PPE', 'LIVE');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE phase_status_enum AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'DELAYED', 'ON_HOLD');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Create sequences for auto-increment columns
 CREATE SEQUENCE IF NOT EXISTS projects_id_seq START 1;
@@ -65,12 +78,12 @@ CREATE TABLE IF NOT EXISTS projects (
 CREATE TABLE IF NOT EXISTS project_phases (
     id BIGSERIAL PRIMARY KEY,
     project_id BIGINT NOT NULL,
-    phase_name VARCHAR(50) NOT NULL CHECK (phase_name IN ('ESTIMATED', 'PLANNING', 'DEVELOPMENT', 'SIT', 'UAT', 'PPE', 'LIVE')),
+    phase_name phase_name_enum NOT NULL,
     start_date DATE,
     end_date DATE,
     planned_start_date DATE,
     planned_end_date DATE,
-    status VARCHAR(20) DEFAULT 'NOT_STARTED' CHECK (status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'DELAYED', 'ON_HOLD')),
+    status phase_status_enum DEFAULT 'NOT_STARTED',
     progress_percentage DECIMAL(5,2) DEFAULT 0.00 CHECK (progress_percentage >= 0 AND progress_percentage <= 100),
     is_completed BOOLEAN DEFAULT FALSE,
     is_overdue BOOLEAN DEFAULT FALSE,
@@ -88,7 +101,7 @@ CREATE TABLE IF NOT EXISTS key_milestones (
     description TEXT,
     milestone_date DATE,
     actual_date DATE,
-    status VARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD')),
+    status VARCHAR(20) DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD', 'DELAYED', 'AT_RISK')),
     priority VARCHAR(20) DEFAULT 'MEDIUM' CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
     progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
     owner VARCHAR(255),
@@ -184,4 +197,4 @@ COMMENT ON TABLE key_milestones IS 'Project milestones and deliverables';
 COMMENT ON COLUMN projects.it_project_status IS 'Project status: GREEN (on track), AMBER (at risk), RED (critical)';
 COMMENT ON COLUMN projects.escalation IS 'Whether the project has been escalated to management';
 COMMENT ON COLUMN project_phases.phase_name IS 'Phase type: ESTIMATED, PLANNING, DEVELOPMENT, SIT, UAT, PPE, LIVE';
-COMMENT ON COLUMN key_milestones.status IS 'Milestone status: PENDING, IN_PROGRESS, COMPLETED, CANCELLED, ON_HOLD';
+COMMENT ON COLUMN key_milestones.status IS 'Milestone status: PENDING, IN_PROGRESS, COMPLETED, CANCELLED, ON_HOLD, DELAYED, AT_RISK';

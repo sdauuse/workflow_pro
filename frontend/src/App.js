@@ -19,6 +19,7 @@ import Dashboard from './components/Dashboard';
 import SystemHealthCheck from './components/SystemHealthCheck';
 import GanttChart from './components/GanttChart';
 import EnhancedGanttChart from './components/EnhancedGanttChart';
+import GanttDemo from './components/GanttDemo';
 import projectService from './services/projectService';
 import teamService from './services/teamService';
 import teamMemberService from './services/teamMemberService';
@@ -565,6 +566,11 @@ function App() {
       label: 'Enhanced Gantt',
     },
     {
+      key: 'gantt-demo',
+      icon: <BarChartOutlined />,
+      label: 'New Gantt Design',
+    },
+    {
       key: 'health-check',
       icon: <HeartOutlined />,
       label: 'System Health',
@@ -684,6 +690,8 @@ function App() {
             }}
           />
         );
+      case 'gantt-demo':
+        return <GanttDemo />;
       case 'health-check':
         return <SystemHealthCheck />;
       default:

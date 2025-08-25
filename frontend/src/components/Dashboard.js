@@ -1,15 +1,36 @@
-import React from 'react';
-import { Card, Row, Col, Typography, Statistic, Progress } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Typography, Statistic, Progress, Select, Space } from 'antd';
 import {
   ProjectOutlined,
   AlertOutlined,
   CalendarOutlined,
   TeamOutlined
 } from '@ant-design/icons';
+import GanttView from './GanttView';
+import projectService from '../services/projectService';
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const Dashboard = ({ projects = [], teams = [], teamMembers = [] }) => {
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [availableProjects, setAvailableProjects] = useState([]);
+
+  useEffect(() => {
+    // 获取所有项目列表
+    const loadProjects = async () => {
+      try {
+        const projectsData = await projectService.getAllProjects();
+        setAvailableProjects(projectsData);
+        if (projectsData.length > 0 && !selectedProjectId) {
+          setSelectedProjectId(projectsData[0].id);
+        }
+      } catch (error) {
+        console.error('Failed to load projects:', error);
+      }
+    };
+    loadProjects();
+  }, [selectedProjectId]);
   const getStatusCount = (status) => {
     return projects.filter(p => p.itProjectStatus === status).length;
   };
@@ -150,6 +171,44 @@ const Dashboard = ({ projects = [], teams = [], teamMembers = [] }) => {
                 </div>
               </div>
             ))}
+          </Card>
+        </Col>
+      </Row>
+
+      {/* 甘特图区域 */}
+      <Row gutter={16} style={{ marginTop: 24 }}>
+        <Col span={24}>
+          <Card 
+            title={
+              <Space>
+                <span>项目甘特图</span>
+                <Select
+                  placeholder="选择项目"
+                  style={{ width: 200 }}
+                  value={selectedProjectId}
+                  onChange={setSelectedProjectId}
+                >
+                  {availableProjects.map(project => (
+                    <Option key={project.id} value={project.id}>
+                      {project.projectName || project.project_name || `项目 ${project.id}`}
+                    </Option>
+                  ))}
+                </Select>
+              </Space>
+            }
+          >
+            {selectedProjectId ? (
+              <GanttView 
+                projectId={selectedProjectId}
+                onPhaseUpdate={(phaseId, phaseData) => {
+                  console.log('Phase updated:', phaseId, phaseData);
+                }}
+              />
+            ) : (
+              <div style={{ textAlign: 'center', padding: 40, color: '#999' }}>
+                请选择一个项目来查看甘特图
+              </div>
+            )}
           </Card>
         </Col>
       </Row>
